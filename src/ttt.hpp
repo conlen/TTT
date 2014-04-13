@@ -143,7 +143,14 @@ int ttt<DEBUG>::gameWon()
 
 	if(board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[0][0] != ' ') return( board[0][0] == 'X' ? 1 : 2);
 	if(board[2][0] == board[1][1] && board[1][1] == board[0][2] && board[2][0] != ' ') return( board[2][0] == 'X' ? 1 : 2);
-
+	for(auto i = 0; i < 3; i++) {
+		for(auto j = 0; j < 3; j++) {
+			if(board[i][j] == ' ') goto noWinner;
+		}
+	}
+	if(DEBUG) { std::cout << "ttt<DEBUG>::gameWon() == 0" << std::endl; }
+	return(3);
+noWinner:
 	if(DEBUG) { std::cout << "ttt<DEBUG>::gameWon() == 0" << std::endl; }
 	return(0);
 

@@ -8,9 +8,13 @@ void test1()
 {
 	ttt<1>	gameDebug("Mike", "COMPUTER");
 	ttt<>	game;
+	char	move;
 
 	cout << gameDebug;
-	for(auto i = 0; i < 9; i++) {
+	while(!gameDebug.gameWon()) {
+		cin >> move;
+		cout << (int)move << endl;
+		gameDebug.move(move - '0');
 		gameDebug.moveRandom();
 		cout << gameDebug;
 	}
