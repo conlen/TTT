@@ -1,6 +1,9 @@
+#include <chrono>
 #include <iostream>
+#include <random>
 #include <string>
 #include <vector>
+#include <utility>
 
 template<int DEBUG=0>
 class ttt;
@@ -11,15 +14,20 @@ std::ostream& operator<<(std::ostream& s, ttt<DEBUG> &t);
 template<int DEBUG>
 class ttt {
 	private:
+		/* board[column][row] */
 		std::vector<std::vector<char>>	board;
+
 		std::vector<std::string>		player;
 		int 							turn = 0;
+		std::mt19937					mt;
 	public:
 		ttt();
 		ttt(const std::string &player1, const std::string &player2);
 		~ttt();
+		int move(int m);
+		int moveRandom();
+		int gameWon();
 
-	
 	friend std::ostream& operator<<<DEBUG>(std::ostream& s, ttt<DEBUG> &t);
 };
 
@@ -39,6 +47,8 @@ ttt<DEBUG>::ttt()
 	player.resize(2);
 	player[0] = "";
 	player[1] = "";
+	if(DEBUG) { std::cout << "ttt<DEBUG>:ttt(): seed random number generator" << std::endl; }
+	mt.seed(std::chrono::system_clock::now().time_since_epoch().count());
 	if(DEBUG) { std::cout << "end" << "ttt<DEBUG>::ttt();" << std::endl; }
 	return;
 }
@@ -47,6 +57,7 @@ template<int DEBUG>
 ttt<DEBUG>::ttt(const std::string &player1, const std::string &player2)
 	: ttt()
 {
+	if(DEBUG) { std::cout << "ttt<DEBUG>::ttt(const std::string&, const std::string&);" << std::endl; }
 	player.resize(2);
 	player[0] = player1; player[1] = player2;
 	return;
@@ -57,6 +68,85 @@ ttt<DEBUG>::~ttt()
 {
 	if(DEBUG) { std::cout << "ttt<DEBUG>::~ttt();" << std::endl; }
 	return;
+}
+
+template<int DEBUG>
+int ttt<DEBUG>::move(int m)
+{
+	int column, row;
+	if(DEBUG) { std::cout << "ttt<DEBUG>::move(int);" << std::endl; }
+	switch(m) {
+		case 1:
+			column = 0; row = 2;
+			break;
+		case 2:
+			column = 1; row = 2;
+			break;
+		case 3:
+			column = 2; row = 2;
+			break;
+		case 4:
+			column = 0; row = 1;
+			break;
+		case 5:
+			column = 1; row = 1;
+			break;
+		case 6:
+			column = 2; row = 1;
+			break;
+		case 7:
+			column = 0; row = 0;
+			break;
+		case 8:
+			column = 1; row = 0;
+			break;
+		case 9:
+			column = 2; row = 0;
+			break;
+		default:
+			return(-2);
+	}
+	if(board[column][row] != ' ') return(-1);
+	board[column][row] = (turn++ % 2 == 0 ? 'X' : 'O');
+	return(0);
+}
+
+template<int DEBUG>
+int ttt<DEBUG>::moveRandom()
+{
+	int		i, j, play, row, col;
+	std::uniform_int_distribution<int> randomPlay(0, 8);
+
+	if(DEBUG) { std::cout << "ttt<DEBUG>::moveRandom();" << std::endl; }
+	if(gameWon() > 0) return(-1);
+	while(true) {
+		play = randomPlay(mt);
+		row = play % 3; 
+		col = play / 3;
+		if(board[col][row] == ' ') break;
+	}
+	board[col][row] = (turn++ % 2 == 0 ? 'X' : 'O');
+	return(0);
+}
+
+template<int DEBUG>
+int ttt<DEBUG>::gameWon()
+{
+	if(DEBUG) { std::cout << "ttt<DEBUG>::gameWon();" << std::endl; }
+	if(board[0][0] == board[1][0] && board[1][0] == board[2][0] && board[0][0] != ' ') return( board[0][0] == 'X' ? 1 : 2);
+	if(board[0][1] == board[1][1] && board[1][1] == board[2][1] && board[0][1] != ' ') return( board[0][1] == 'X' ? 1 : 2);
+	if(board[0][2] == board[1][2] && board[1][2] == board[2][2] && board[0][2] != ' ') return( board[0][2] == 'X' ? 1 : 2);
+
+	if(board[0][0] == board[0][1] && board[0][1] == board[0][2] && board[0][0] != ' ') return( board[0][0] == 'X' ? 1 : 2);
+	if(board[1][0] == board[1][1] && board[1][1] == board[1][2] && board[1][0] != ' ') return( board[1][0] == 'X' ? 1 : 2);
+	if(board[2][0] == board[2][1] && board[2][1] == board[2][2] && board[2][0] != ' ') return( board[2][0] == 'X' ? 1 : 2);
+
+	if(board[0][0] == board[1][1] && board[1][1] == board[2][2] && board[0][0] != ' ') return( board[0][0] == 'X' ? 1 : 2);
+	if(board[2][0] == board[1][1] && board[1][1] == board[0][2] && board[2][0] != ' ') return( board[2][0] == 'X' ? 1 : 2);
+
+	if(DEBUG) { std::cout << "ttt<DEBUG>::gameWon() == 0" << std::endl; }
+	return(0);
+
 }
 
 template<int DEBUG>
