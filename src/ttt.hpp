@@ -16,6 +16,7 @@ class ttt {
 	private:
 		/* board[column][row] */
 		std::vector<std::vector<char>>	board;
+		std::vector<std::vector<std::vector<char>>>	history;
 
 		std::vector<std::string>		player;
 		int 							turn = 0;
@@ -43,6 +44,7 @@ ttt<DEBUG>::ttt()
 			j = ' ';
 		}
 	}
+	history.push_back(board);
 	if(DEBUG) { std::cout << "ttt<DEBUG>::ttt(): setup players" << std::endl; }
 	player.resize(2);
 	player[0] = "";
@@ -108,6 +110,7 @@ int ttt<DEBUG>::move(int m)
 	}
 	if(board[column][row] != ' ') return(-1);
 	board[column][row] = (turn++ % 2 == 0 ? 'X' : 'O');
+	history.push_back(board);
 	return(0);
 }
 
@@ -126,6 +129,7 @@ int ttt<DEBUG>::moveRandom()
 		if(board[col][row] == ' ') break;
 	}
 	board[col][row] = (turn++ % 2 == 0 ? 'X' : 'O');
+	history.push_back(board);
 	return(0);
 }
 
