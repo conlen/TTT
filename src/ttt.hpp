@@ -1,9 +1,13 @@
+#ifndef TTT_HPP
+#define TTT_HPP
+
 #include <chrono>
 #include <iostream>
 #include <random>
 #include <string>
 #include <vector>
 #include <utility>
+
 
 template<int DEBUG=0>
 class ttt;
@@ -14,7 +18,7 @@ std::ostream& operator<<(std::ostream& s, ttt<DEBUG> &t);
 template<int DEBUG>
 class ttt {
 	private:
-		/* board[column][row] */
+		/* board[col][row] */
 		std::vector<std::vector<char>>	board;
 		std::vector<std::vector<std::vector<char>>>	history;
 
@@ -23,13 +27,16 @@ class ttt {
 		std::mt19937					mt;
 	public:
 		ttt();
+		ttt(const std::vector<std::vector<char>> &b);
 		ttt(const std::string &player1, const std::string &player2);
 		~ttt();
 		int move(int m);
 		int moveRandom();
 		int gameWon();
+		void setBoard(const std::vector<std::vector<char>> &b);
+		std::vector<std::vector<char>> getBoard();
 
-	friend std::ostream& operator<<<DEBUG>(std::ostream& s, ttt<DEBUG> &t);
+	friend std::ostream& operator<<  <DEBUG>(std::ostream& s, ttt<DEBUG> &t);
 };
 
 template<int DEBUG>
@@ -55,6 +62,13 @@ ttt<DEBUG>::ttt()
 	return;
 }
 
+template<int DEBUG>
+ttt<DEBUG>::ttt(const std::vector<std::vector<char>> &b)
+	: ttt()
+{
+	board = b;
+	return;
+}
 template<int DEBUG>
 ttt<DEBUG>::ttt(const std::string &player1, const std::string &player2)
 	: ttt()
@@ -134,6 +148,13 @@ int ttt<DEBUG>::moveRandom()
 }
 
 template<int DEBUG>
+void ttt<DEBUG>::setBoard(const std::vector<std::vector<char>> &b)
+{
+	board = b;
+	return;
+}
+
+template<int DEBUG>
 int ttt<DEBUG>::gameWon()
 {
 	if(DEBUG) { std::cout << "ttt<DEBUG>::gameWon();" << std::endl; }
@@ -161,6 +182,12 @@ noWinner:
 }
 
 template<int DEBUG>
+std::vector<std::vector<char>> ttt<DEBUG>::getBoard()
+{
+	return(board);
+}
+
+template<int DEBUG>
 std::ostream& operator<<(std::ostream& s, ttt<DEBUG> &t)
 {
 	if(DEBUG) { std::cout << "operator<<(std::ostream&, ttt<DEBUG> &);" << std::endl; }
@@ -173,3 +200,4 @@ std::ostream& operator<<(std::ostream& s, ttt<DEBUG> &t)
 	s << t.board[0][2] << "|" << t.board[1][2] << "|" << t.board[2][2] << std::endl;
 	return s;
 }
+#endif
