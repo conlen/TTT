@@ -16,16 +16,16 @@ std::ostream& operator<<(std::ostream& s, boardTree &b);
 
 class boardTree {
 	private:
-		Board	node;
+		ttt<0>	node;
 		std::vector<boardTree>		leafs;
 
 	public:
 		boardTree();
-		boardTree(const Board &b);
+		boardTree(const ttt<0> &b);
 		~boardTree();
-		void setBoard(const Board &b);
-		Board getBoard();
-		Board &insertBoard(const Board &b);
+		void setBoard(const ttt<0> &b);
+		ttt<0> getBoard();
+		boardTree *insertBoard(const ttt<0> &b);
 
 	friend std::ostream& operator<<(std::ostream& s, boardTree &b);
 
@@ -36,7 +36,7 @@ boardTree::boardTree()
 	return;
 }
 
-boardTree::boardTree(const Board &b)
+boardTree::boardTree(const ttt<0> &b)
 	: boardTree()
 {
 	node = b;
@@ -48,21 +48,21 @@ boardTree::~boardTree()
 	return;
 }
 
-void boardTree::setBoard(const Board &b)
+void boardTree::setBoard(const ttt<0> &b)
 {
 	node = b;
 	return;
 }
 
-Board &boardTree::insertBoard(const Board &b)
+boardTree *boardTree::insertBoard(const ttt<0> &b)
 {
 	boardTree	bt(b);
 	leafs.push_back(bt);
-	return(leafs[leafs.size()-1].node);
+	return(&(leafs[leafs.size()-1]));
 }
-Board boardTree::getBoard()
+ttt<0> boardTree::getBoard()
 {
-	std::cout << "boardTree::getBoard()" << std::endl;
+	// std::cout << "boardTree::getBoard()" << std::endl;
 	return(node);
 }
 

@@ -15,16 +15,34 @@ class ttt;
 template<int DEBUG=0>
 std::ostream& operator<<(std::ostream& s, ttt<DEBUG> &t);
 
+// class rng19 {
+// public:
+// 	static rng19& getInstance() 
+// 	{ 
+// 		static rng19	instance;
+// 		return instance;
+// 	}
+
+// private:
+// 	std::mt19937	mt;
+// 	static rng19	me;
+
+// 	rng19() {};
+// 	rng19(rng19 const&);
+// 	void operator=(rng19 const&);
+// }
+
 template<int DEBUG>
 class ttt {
 	private:
 		/* board[col][row] */
 		std::vector<std::vector<char>>	board;
-		std::vector<std::vector<std::vector<char>>>	history;
+//		std::vector<std::vector<std::vector<char>>>	history;
 
 		std::vector<std::string>		player;
 		int 							turn = 0;
-		std::mt19937					mt;
+		static std::mt19937				mt;
+		static bool 					mtSet;
 	public:
 		ttt();
 		ttt(const std::vector<std::vector<char>> &b);
@@ -33,11 +51,18 @@ class ttt {
 		int move(int m);
 		int moveRandom();
 		int gameWon();
+
 		void setBoard(const std::vector<std::vector<char>> &b);
 		std::vector<std::vector<char>> getBoard();
 
 	friend std::ostream& operator<<  <DEBUG>(std::ostream& s, ttt<DEBUG> &t);
 };
+
+template<int DEBUG>
+bool ttt<DEBUG>::mtSet = false;
+
+template<int DEBUG>
+std::mt19937 ttt<DEBUG>::mt;
 
 template<int DEBUG>
 ttt<DEBUG>::ttt()
@@ -51,13 +76,16 @@ ttt<DEBUG>::ttt()
 			j = ' ';
 		}
 	}
-	history.push_back(board);
+//	history.push_back(board);
 	if(DEBUG) { std::cout << "ttt<DEBUG>::ttt(): setup players" << std::endl; }
 	player.resize(2);
 	player[0] = "";
 	player[1] = "";
 	if(DEBUG) { std::cout << "ttt<DEBUG>:ttt(): seed random number generator" << std::endl; }
-	mt.seed(std::chrono::system_clock::now().time_since_epoch().count());
+	if(mtSet == false) { 
+		mt.seed(std::chrono::system_clock::now().time_since_epoch().count());
+		mtSet = true;
+	}
 	if(DEBUG) { std::cout << "end" << "ttt<DEBUG>::ttt();" << std::endl; }
 	return;
 }
@@ -124,7 +152,7 @@ int ttt<DEBUG>::move(int m)
 	}
 	if(board[column][row] != ' ') return(-1);
 	board[column][row] = (turn++ % 2 == 0 ? 'X' : 'O');
-	history.push_back(board);
+//	history.push_back(board);
 	return(0);
 }
 
@@ -143,7 +171,7 @@ int ttt<DEBUG>::moveRandom()
 		if(board[col][row] == ' ') break;
 	}
 	board[col][row] = (turn++ % 2 == 0 ? 'X' : 'O');
-	history.push_back(board);
+//	history.push_back(board);
 	return(0);
 }
 
@@ -153,6 +181,8 @@ void ttt<DEBUG>::setBoard(const std::vector<std::vector<char>> &b)
 	board = b;
 	return;
 }
+
+
 
 template<int DEBUG>
 int ttt<DEBUG>::gameWon()

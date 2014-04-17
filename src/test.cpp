@@ -6,39 +6,38 @@
 
 using namespace std;
 
-void fillTree(boardTree &t) 
+void fillTree(boardTree &t, int depth = 0) 
 {
-	ttt<>	game(t.getBoard()), tmpGame;
-	boardTree	newTree;
+	ttt<>	game = t.getBoard(), tmpGame;
+	boardTree	*newTree;
 	int rc;
+	static int counter = 0;
 
 	for(auto i = 1; i<=9; i++) {
 		tmpGame = game;
 		rc = tmpGame.move(i);
-		if(rc == 0) { newTree = t.insertBoard(tmpGame.getBoard()); }
-		if(tmpGame.gameWon() == 0) { fillTree(newTree); }
+		if(rc == 0) { 
+			newTree = t.insertBoard(tmpGame); 
+			if(tmpGame.gameWon() == 0) { fillTree(*newTree, depth+1); }
+		}
+		
 	}
 }
 
 void test2()
 {
-	ttt<1> game, tmpGame; 
-	Board	b;
+	ttt<> game, tmpGame; 
 	boardTree	t;
 	int 		rc;
+	char		move;
 
-cout << "foo" << endl;
-	b = game.getBoard();
-cout << "foo" << endl;
-	t.setBoard(b);
-cout << "foo" << endl;
+	cout << game;
+	cin >> move;
+	cout << (int)move << endl;
+	game.move(move - '0');
+
+	t.setBoard(game);
 	fillTree(t);
-cout << "foo" << endl;	
-	// for(auto i = 1; i<= 9; i++) {
-	// 	tmpGame = game;
-	// 	rc = tmpGame.move(i);
-	// 	if(rc == 0) { t.insertBoard(tmpGame.getBoard()); }
-	// }
 
 	cout << t;
 }
