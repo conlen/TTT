@@ -8,6 +8,7 @@
 
 #include "ttt.hpp"
 
+
 typedef std::vector<std::vector<char>>	Board;
 
 class boardTree;

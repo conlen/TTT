@@ -2,35 +2,23 @@
 #define TTT_HPP
 
 #include <chrono>
+#include <functional>
 #include <iostream>
 #include <random>
 #include <string>
 #include <vector>
 #include <utility>
 
+typedef std::vector<std::vector<char>> tttBoard;
 
 template<int DEBUG=0>
 class ttt;
 
 template<int DEBUG=0>
-std::ostream& operator<<(std::ostream& s, ttt<DEBUG> &t);
+class hash_ttt;
 
-// class rng19 {
-// public:
-// 	static rng19& getInstance() 
-// 	{ 
-// 		static rng19	instance;
-// 		return instance;
-// 	}
-
-// private:
-// 	std::mt19937	mt;
-// 	static rng19	me;
-
-// 	rng19() {};
-// 	rng19(rng19 const&);
-// 	void operator=(rng19 const&);
-// }
+template<int DEBUG=0>
+std::ostream& operator<<(std::ostream& s, const ttt<DEBUG> &t);
 
 template<int DEBUG>
 class ttt {
@@ -48,14 +36,19 @@ class ttt {
 		ttt(const std::vector<std::vector<char>> &b);
 		ttt(const std::string &player1, const std::string &player2);
 		~ttt();
+
+		bool operator==(const ttt<DEBUG> &o) const;
+
 		int move(int m);
 		int moveRandom();
-		int gameWon();
+		int gameWon() const;
 
 		void setBoard(const std::vector<std::vector<char>> &b);
 		std::vector<std::vector<char>> getBoard();
 
-	friend std::ostream& operator<<  <DEBUG>(std::ostream& s, ttt<DEBUG> &t);
+	friend class hash_ttt<DEBUG>;
+	friend std::ostream& operator<<  <DEBUG>(std::ostream& s, const ttt<DEBUG> &t);
+	
 };
 
 template<int DEBUG>
@@ -185,7 +178,7 @@ void ttt<DEBUG>::setBoard(const std::vector<std::vector<char>> &b)
 
 
 template<int DEBUG>
-int ttt<DEBUG>::gameWon()
+int ttt<DEBUG>::gameWon() const
 {
 	if(DEBUG) { std::cout << "ttt<DEBUG>::gameWon();" << std::endl; }
 	if(board[0][0] == board[1][0] && board[1][0] == board[2][0] && board[0][0] != ' ') return( board[0][0] == 'X' ? 1 : 2);
@@ -218,7 +211,7 @@ std::vector<std::vector<char>> ttt<DEBUG>::getBoard()
 }
 
 template<int DEBUG>
-std::ostream& operator<<(std::ostream& s, ttt<DEBUG> &t)
+std::ostream& operator<<(std::ostream& s, const ttt<DEBUG> &t)
 {
 	if(DEBUG) { std::cout << "operator<<(std::ostream&, ttt<DEBUG> &);" << std::endl; }
 	s << "X : " << t.player[0] << std::endl;
@@ -230,4 +223,27 @@ std::ostream& operator<<(std::ostream& s, ttt<DEBUG> &t)
 	s << t.board[0][2] << "|" << t.board[1][2] << "|" << t.board[2][2] << std::endl;
 	return s;
 }
+
+template<int DEBUG>
+bool ttt<DEBUG>::operator==(const ttt<DEBUG> &o) const
+{
+	return board == o.board;
+}
+
+
+template<int DEBUG>
+class hash_ttt {
+public:
+	size_t operator()(const ttt<DEBUG> &t) const {
+		size_t	r = 0;
+		for(auto i : t.board ) { 
+			for(auto j : i) {
+				r^= std::hash<char>()(j);
+			}
+		}
+		return r;
+	}
+	
+};
+
 #endif
