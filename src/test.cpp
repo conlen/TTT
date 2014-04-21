@@ -18,38 +18,35 @@ void fillTree2(tttTree &t, int depth = 0)
 	int 					rc;
 	static int 				counter = 0;
 
-	cout << "depth = " << depth << ", count = " << counter++ << endl;
 	for(auto i : t) {
 		if(i.first.gameWon() == 0)
 		for(auto j = 1; j <= 9; j++) {
-			cout << "depth = " << depth << ", count = " << counter << " number : " << j << endl;
 			tmpGame = i.first;
 			rc = tmpGame.move(j);
-			if(rc == 0) { i.second->insert(pair<ttt<>, shared_ptr<tttTree>>(tmpGame, make_shared<tttTree>())); }
+			if(rc == 0) { i.second->insert(tmpGame); }
 		}
 		fillTree2(*i.second, depth+1);
 	}
 	return;
-
 }
 
 void test3()
 {
 	ttt<> 		game, tmpGame;
-	tttTree		gameTree, tmpTree;
+	tttTree		gameTree;
 	int 		rc;
 	char 		move;
 
-	gameTree.insert(pair<ttt<>, shared_ptr<tttTree>>(game, make_shared<tttTree>()));
+	gameTree.insert(game);
 	cout << game;
 	move = '7';
 	cout << move << endl;
 	tmpGame = game;
 	tmpGame.move(move - '0');
 	cout << tmpGame << endl;
-	gameTree[game]->insert(pair<ttt<>, shared_ptr<tttTree>>(tmpGame, make_shared<tttTree>()));
-
+	gameTree[game]->insert(tmpGame);
 	fillTree2(*gameTree[game]);
+	cout << gameTree << endl;
 
 }
 
@@ -67,7 +64,6 @@ void fillTree(boardTree &t, int depth = 0)
 			newTree = t.insertBoard(tmpGame); 
 			if(tmpGame.gameWon() == 0) { fillTree(*newTree, depth+1); }
 		}
-		
 	}
 }
 
