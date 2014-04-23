@@ -25,7 +25,7 @@ class tree : public std::unordered_map<T, treeSPPair<T, H>, H>, public std::enab
 		treeSP<T, H> find(const T &d);
 };
 
-// This does not point to the parent, it points to itself. 
+// This does not point to the parent, it points to itself.
 template<typename T, typename H>
 void tree<T, H>::insert(const T &d)
 {

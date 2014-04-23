@@ -24,7 +24,7 @@ void fillTree2(tttTree &t, int depth = 0)
 		for(auto j = 1; j <= 9; j++) {
 			tmpGame = i.first;
 			rc = tmpGame.move(j);
-			if(rc == 0) { i.second.first->insert(tmpGame, t.getShared()); }
+			if(rc == 0) { i.second.first->insert(tmpGame, t.find(i.first)); }
 		}
 		fillTree2(*i.second.first, depth+1);
 	}
@@ -48,6 +48,9 @@ void test3()
 	(*gameTree)[game].first->insert(tmpGame);
 	cout << "filling tree" << endl;
 	fillTree2(*(*gameTree)[game].first);
+
+
+
 	tmpGame.move('8' - '0');
 	tmpGame.move('9' - '0');
 	tmpGame.move('1' - '0');
