@@ -15,6 +15,9 @@ template<typename T, typename H>
 using treeSPPair = std::pair<treeSP<T, H>, treeSP<T, H>>;
 
 template<typename T, typename H>
+std::ostream& operator<<(std::ostream& s, const tree<T, H> &t);
+
+template<typename T, typename H>
 class tree : public std::unordered_map<T, treeSPPair<T, H>, H>, public std::enable_shared_from_this<tree<T, H>>
 { 
 	using std::unordered_map<T, treeSPPair<T, H>, H>::insert;
@@ -23,6 +26,7 @@ class tree : public std::unordered_map<T, treeSPPair<T, H>, H>, public std::enab
 		void insert(const T &d, treeSP<T, H> p);
 		treeSP<T, H> getShared();
 		treeSP<T, H> find(const T &d);
+	friend std::ostream& operator<< <T, H>(std::ostream& s, const tree<T, H> &t);
 };
 
 // This does not point to the parent, it points to itself.
@@ -42,8 +46,9 @@ void tree<T, H>::insert(const T &d, treeSP<T, H> p)
 }
 
 template<typename T, typename H>
-treeSP<T, H> tree<T, H>::getShared()
+treeSP<T, H> tree<T, H>::getShared() 
 {
+	
 	return(this->shared_from_this());
 }
 
@@ -66,10 +71,12 @@ template<typename T, typename H>
 std::ostream& operator<<(std::ostream& s, const tree<T, H> &t);
 
 template<typename T, typename H>
-std::ostream& operator<<(std::ostream& s, const tree<T, H> &t)
+std::ostream& operator<<(std::ostream& s, tree<T, H> &t)
 {
+	
+	s << "Node degree = " << t.size() << std::endl;
 	for(auto i : t) {
-		s << i.first << std::endl;
+		s << t.getShared() << ", " << i.first << ", " << i.second.first << ", " << i.second.second << std::endl;
 		s << *i.second.first << std::endl;
 	}
 	return s;

@@ -10,6 +10,27 @@
 using namespace std;
 
 
+class hash_int {
+public:
+	size_t operator()(const int &i) const {
+		return std::hash<int>()(i);
+	}
+	
+};
+
+void test4()
+{
+	shared_ptr<tree<int, hash_int>>	iTree(new tree<int, hash_int>), tmpTree;
+
+	iTree->insert(12);
+	(*iTree)[12].first->insert(4, iTree->getShared());
+	(*iTree)[12].first->insert(3, iTree->getShared());
+	(*(*iTree)[12].first)[4].first->insert(2, (*iTree)[12].first->getShared());
+
+	cout << *iTree << endl;
+
+}
+
 typedef tree<ttt<>, hash_ttt<>> tttTree;
 
 void fillTree2(tttTree &t, int depth = 0)
@@ -24,7 +45,7 @@ void fillTree2(tttTree &t, int depth = 0)
 		for(auto j = 1; j <= 9; j++) {
 			tmpGame = i.first;
 			rc = tmpGame.move(j);
-			if(rc == 0) { i.second.first->insert(tmpGame, t.find(i.first)); }
+			if(rc == 0) { i.second.first->insert(tmpGame, t.getShared()); }
 		}
 		fillTree2(*i.second.first, depth+1);
 	}
@@ -124,7 +145,8 @@ void test1()
 
 int main(int argc, char *argv[], char *env[])
 {
-	//test1();
+	// test1();
 	// test2();
 	test3();
+	test4();
 }
