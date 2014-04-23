@@ -7,22 +7,23 @@
 #include <unordered_map>
 #include <utility>
 
-template<typename T, typename C>
+template<typename T, template <typename, typename = std::allocator<T>> class C = std::vector>
 class tree;
 
-template<typename T, typename C>
+template<typename T, template <typename, typename> class C>
 using treeSP = std::shared_ptr<tree<T, C>>;
 
-template<typename T, typename C>
-using treeSPVec = std::vector<treeSP<T, C>>;
+template<typename T, template <typename, typename = std::allocator<T>> class C>
+using treeSPVec = C<treeSP<T, C>>;
 
-template<typename T, typename C>
+template<typename T, template <typename, typename> class C>
 using node = std::pair<T, treeSP<T, C>>;
 
-template<typename T, typename C>
-std::ostream& operator<<(std::ostream& s, tree<T, C> &t);
 
-template<typename T, typename C>
+template<typename T, template <typename, typename> class C>
+std::ostream& operator<<(std::ostream& s, tree<T> &t);
+
+template<typename T, template <typename, typename> class C>
 class tree: public std::pair<std::pair<T, treeSP<T, C>>, treeSPVec<T, C>>, 
 			public std::enable_shared_from_this<tree<T, C>>
 {
@@ -36,7 +37,7 @@ class tree: public std::pair<std::pair<T, treeSP<T, C>>, treeSPVec<T, C>>,
 
 };
 
-template<typename T, typename C>
+template<typename T, template <typename, typename> class C>
 tree<T, C>::tree(const T &d)
 	: std::pair< std::pair<T, treeSP<T, C>>, treeSPVec<T, C> >
 		(std::make_pair(std::make_pair(d, treeSP<T, C>()), treeSPVec<T, C>()))
@@ -44,7 +45,7 @@ tree<T, C>::tree(const T &d)
 	return;
 }
 
-template<typename T, typename C>
+template<typename T, template <typename, typename> class C>
 tree<T, C>::tree(const T &d, const treeSP<T, C> &p)
 	: std::pair< std::pair<T, treeSP<T, C>>, treeSPVec<T, C> >
 		(std::make_pair(std::make_pair(d, p), treeSPVec<T, C>()))
@@ -52,13 +53,13 @@ tree<T, C>::tree(const T &d, const treeSP<T, C> &p)
 	return;
 }
 
-template<typename T, typename C>
+template<typename T, template <typename, typename> class C>
 treeSP<T, C> tree<T, C>::getShared()
 {
 	return(this->shared_from_this());
 }
 
-template<typename T, typename C>
+template<typename T, template <typename, typename> class C>
 void tree<T, C>::insert(const T &d)
 {
 	treeSP<T, C>	newTree(new tree<T, C>(d, this->getShared()));
@@ -67,7 +68,7 @@ void tree<T, C>::insert(const T &d)
 	return;
 }
 
-template<typename T, typename C>
+template<typename T, template <typename, typename> class C>
 treeSP<T, C> tree<T, C>::find(const T &d)
 {
 	treeSP<T, C>	r;
@@ -78,7 +79,7 @@ treeSP<T, C> tree<T, C>::find(const T &d)
 	return(NULL);
 }
 
-template<typename T, typename C>
+template<typename T, template <typename, typename> class C>
 std::ostream& operator<<(std::ostream& s, tree<T, C> &t)
 {
 	s << t.getShared() << ", " << t.first.first << ", " << t.first.second <<  std::endl;

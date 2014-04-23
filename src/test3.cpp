@@ -1,17 +1,20 @@
 #include <iostream>
 #include <typeinfo>
 #include <memory>
+#include <vector>
+#include <unordered_map>
+#include <list>
 
 #include "ttt.hpp"
-#include "tree2.hpp"
+#include "tree3.hpp"
 
 
 using namespace std;
 
-void fillTree2(shared_ptr<tree<ttt<>>> &t, int depth = 0)
+void fillTree2(shared_ptr<tree<ttt<>, list>> &t, int depth = 0)
 {
 	ttt<>					game, tmpGame;
-	shared_ptr<tree<ttt<>>>	newTree;
+	shared_ptr<tree<ttt<>, list>>	newTree;
 	int 					rc;
 	static int 				counter = 0;
 
@@ -29,7 +32,7 @@ void fillTree2(shared_ptr<tree<ttt<>>> &t, int depth = 0)
 void test2()
 {
 	ttt<> game, tmpGame;
-	shared_ptr<tree<ttt<>>>	t(new tree<ttt<>>(game)), tmpTree;
+	shared_ptr<tree<ttt<>, list>>	t(new tree<ttt<>, list>(game)), tmpTree;
 
 	game.move('7' - '0');
 	t->insert(game);
@@ -44,7 +47,7 @@ void test2()
 
 void test1()
 {
-	shared_ptr<tree<int>>	t(new tree<int>(12)), tmpTree;
+	shared_ptr<tree<int, list>>	t(new tree<int, list>(12)), tmpTree;
 	t->insert(4);
 	t->insert(3);
 	cout << *t << endl;
