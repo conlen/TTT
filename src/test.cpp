@@ -1,4 +1,5 @@
 #include <iostream>
+#include <memory>
 #include <typeinfo>
 #include <unordered_map>
 
@@ -23,30 +24,47 @@ void fillTree2(tttTree &t, int depth = 0)
 		for(auto j = 1; j <= 9; j++) {
 			tmpGame = i.first;
 			rc = tmpGame.move(j);
-			if(rc == 0) { i.second->insert(tmpGame); }
+			if(rc == 0) { i.second.first->insert(tmpGame, t.getShared()); }
 		}
-		fillTree2(*i.second, depth+1);
+		fillTree2(*i.second.first, depth+1);
 	}
 	return;
 }
 
 void test3()
 {
-	ttt<> 		game, tmpGame;
-	tttTree		gameTree;
+	ttt<> 					game, tmpGame;
+	shared_ptr<tttTree>		gameTree(new tttTree), tmpTree;
 	int 		rc;
 	char 		move;
 
-	gameTree.insert(game);
+	gameTree->insert(game);
 	cout << game;
 	move = '7';
 	cout << move << endl;
 	tmpGame = game;
 	tmpGame.move(move - '0');
 	cout << tmpGame << endl;
-	gameTree[game]->insert(tmpGame);
-	fillTree2(*gameTree[game]);
-	cout << gameTree << endl;
+	(*gameTree)[game].first->insert(tmpGame);
+	cout << "filling tree" << endl;
+	fillTree2(*(*gameTree)[game].first);
+	tmpGame.move('8' - '0');
+	tmpGame.move('9' - '0');
+	tmpGame.move('1' - '0');
+	tmpGame.move('2' - '0');
+	tmpGame.move('3' - '0');
+	tmpGame.move('4' - '0');
+	tmpGame.move('5' - '0');
+	tmpGame.move('6' - '0');
+
+	cout << *gameTree << endl;
+	cout << "finding game " << endl;
+	cout << tmpGame << endl;
+	tmpTree = gameTree->find(tmpGame);
+	cout << "found tree at " << tmpTree << endl;
+	if(tmpTree != NULL) { cout << *tmpTree << endl; }
+	cout << "tree is " << endl;
+	cout << *(*tmpTree)[tmpGame].second << endl;
 
 }
 
